@@ -1,0 +1,220 @@
+<UserControl
+    x:Class="VideoPlay.Views.MainView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:VideoPlay.Models"
+    xmlns:views="clr-namespace:VideoPlay.Views"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="views:MainView"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <LinearGradientBrush x:Key="ContentBrush" StartPoint="1,0" EndPoint="-4,1">
+            <GradientStop Color="#363636" />
+            <GradientStop Offset="1" Color="#0A0A0C" />
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="ContentBrush1" StartPoint="100%,0%" EndPoint="-400%,100%">
+            <GradientStop Color="#363636" />
+            <GradientStop Offset="1" Color="#0A0A0C" />
+        </LinearGradientBrush>
+    </UserControl.Resources>
+    <Design.DataContext>
+        <!--
+            This only sets the DataContext for the previewer in an IDE,
+            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+        -->
+        <views:MainView />
+    </Design.DataContext>
+    <Grid x:Name="BaseGrid" Background="#1f1f1f">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Button Click="ButtonBase_OnClick">选择文件</Button>
+            <Button Click="Play">播放</Button>
+        </StackPanel>
+        <Grid
+            x:Name="VideoBottomPanel"
+            Grid.Row="1"
+            Loaded="VideoBottomPanel_OnLoaded"
+            SizeChanged="VideoBottomPanel_OnSizeChanged" />
+        <ItemsControl
+            x:Name="PreviewItemControl"
+            Grid.Row="1"
+            Margin="0,0,0,30"
+            ItemsSource="{Binding Media}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid
+                        x:Name="PervieGrid"
+                        Background="#01ffffff"
+                        IsVisible="{Binding IsVisibe}">
+                        <Image Source="{Binding MediaContainer.WriteableBitmap}" />
+                        <TextBlock
+                            x:Name="Index"
+                            Margin="1"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            Foreground="#55ffffff"
+                            IsVisible="{Binding ElementName=PervieGrid, Path=IsPointerOver}">
+                            <Run Text="{Binding LevelIndex}" />
+                            <Run Text="{Binding MediaContainer.FileName, Mode=OneWay}" />
+                        </TextBlock>
+                        <Grid
+                            x:Name="Overlay"
+                            Background="#22ffffff"
+                            IsVisible="{Binding ElementName=PervieGrid, Path=IsPointerOver}">
+                            <Thumb
+                                Name="resizeThumb"
+                                Width="15" 
+                                Height="15" Cursor="SizeAll"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                DragDelta="ResizeThumb_OnDragDelta">
+                                <Thumb.Template>
+                                    <ControlTemplate>
+
+
+
+
+
+                                        <Canvas
+                                            Width="10"
+                                            Height="10"
+                                            Background="#00ffffff"
+                                            ClipToBounds="True">
+                                            <Path
+                                                Width="9.82"
+                                                Height="9.82"
+                                                Data="M9.81786 0.727149L0.727139 9.81786L0 9.09071L9.09072 0L9.81786 0.727149L9.81786 0.727149Z"
+                                                Fill="White"
+                                                Stretch="Fill" />
+                                            <Path
+                                                Canvas.Left="2.82"
+                                                Canvas.Top="2.82"
+                                                Width="7.09"
+                                                Height="7.09"
+                                                Data="M7.09072 0.727149L0.727149 7.09072L0 6.36357L6.36358 0L7.09072 0.727148L7.09072 0.727149Z"
+                                                Fill="White"
+                                                Stretch="Fill" />
+                                            <Path
+                                                Canvas.Left="5.63"
+                                                Canvas.Top="5.64"
+                                                Width="4.36"
+                                                Height="4.36"
+                                                Data="M4.36358 0.727149L0.727149 4.36357L0 3.63643L3.63643 0L4.36357 0.727149L4.36358 0.727149Z"
+                                                Fill="White"
+                                                Stretch="Fill" />
+                                        </Canvas>
+
+
+
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                        </Grid>
+                    </Grid>
+
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas  Background="{StaticResource ContentBrush1}" ClipToBounds="True" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerTheme>
+                <ControlTheme TargetType="ContentPresenter">
+                    <Setter Property="Canvas.Left" Value="{ReflectionBinding Position.X}" />
+                    <Setter Property="Canvas.Top" Value="{ReflectionBinding Position.Y}" />
+                    <Setter Property="Panel.ZIndex" Value="{ReflectionBinding LevelIndex}" />
+                    <Setter Property="Width" Value="{ReflectionBinding Position.Width}" />
+                    <Setter Property="Height" Value="{ReflectionBinding Position.Height}" />
+                </ControlTheme>
+            </ItemsControl.ItemContainerTheme>
+        </ItemsControl>
+        <StackPanel
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Orientation="Horizontal">
+            <TextBlock Foreground="White" Text="{Binding CurrentTime, StringFormat={}{0:hh}:{0:mm}:{0:ss}}" />
+        </StackPanel>
+        <Border Grid.Row="2" Background="White" />
+        <models:TimeLine2
+            x:Name="TimeLine2"
+            Grid.Row="2"
+            Height="30"
+            VerticalAlignment="Top"
+            BigScale="100"
+            PointerPressed="TimeLine2_OnPointerPressed"
+            TotalTimeSpan="0:23:54:30" />
+        <Canvas
+            x:Name="BigCanvas"
+            Grid.Row="2"
+            Height="200"
+            Margin="0,30,0,0"
+            Background="Black">
+            <Rectangle
+                x:Name="TimePosition"
+                Canvas.Left="0"
+                Canvas.Top="0"
+                Width="2"
+                Height="{Binding ElementName=BigCanvas, Path=Bounds.Height}"
+                Fill="Orange"
+                ZIndex="99" />
+            <Border
+                x:Name="Border0"
+                Canvas.Left="0"
+                Canvas.Top="0"
+                Width="{Binding ElementName=BigCanvas, Path=Bounds.Width}"
+                Height="25"
+                Background="#00ffffff"
+                Tag="0" />
+            <Border
+                x:Name="Border1"
+                Canvas.Left="0"
+                Canvas.Top="30"
+                Width="{Binding ElementName=BigCanvas, Path=Bounds.Width}"
+                Height="25"
+                Background="#00ffffff"
+                Tag="1" />
+            <Border
+                x:Name="Border2"
+                Canvas.Left="0"
+                Canvas.Top="60"
+                Width="{Binding ElementName=BigCanvas, Path=Bounds.Width}"
+                Height="25"
+                Background="#00ffffff"
+                Tag="2" />
+            <Border
+                x:Name="Border3"
+                Canvas.Left="0"
+                Canvas.Top="90"
+                Width="{Binding ElementName=BigCanvas, Path=Bounds.Width}"
+                Height="25"
+                Background="#00ffffff"
+                Tag="3" />
+            <Border
+                x:Name="Border4"
+                Canvas.Left="0"
+                Canvas.Top="120"
+                Width="{Binding ElementName=BigCanvas, Path=Bounds.Width}"
+                Height="25"
+                Background="#00ffffff"
+                Tag="4" />
+            <Border
+                x:Name="Border5"
+                Canvas.Left="0"
+                Canvas.Top="150"
+                Width="{Binding ElementName=BigCanvas, Path=Bounds.Width}"
+                Height="25"
+                Background="#00ffffff"
+                Tag="5" />
+        </Canvas>
+    </Grid>
+
+</UserControl>

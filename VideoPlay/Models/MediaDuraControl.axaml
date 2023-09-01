@@ -1,0 +1,65 @@
+<UserControl
+    x:Class="VideoPlay.MediaDuraControl"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:VideoPlay.Models"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="models:Media"
+    mc:Ignorable="d">
+    <Grid
+        Width="{ReflectionBinding ActualWidth,
+                                  Mode=TwoWay}"
+        Height="25"
+        Cursor="Arrow">
+        <!--<ToolTip.Tip>
+            <StackPanel
+                Margin="8,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                IsHitTestVisible="False"
+                Orientation="Horizontal">
+                <TextBlock Text="{ReflectionBinding Duration, StringFormat={}{0:hh}:{0:mm}:{0:ss}.{0:ff}}" />
+                <TextBlock Text="   " />
+                <TextBlock Text="{ReflectionBinding MediaContainer.FileName}" />
+            </StackPanel>
+        </ToolTip.Tip>-->
+        <Rectangle Fill="Gray" />
+        <Thumb
+            Width="10"
+            HorizontalAlignment="Left"
+            Cursor="Hand"
+            DragDelta="LeftDrag">
+            <Thumb.Template>
+                <ControlTemplate>
+                    <Border Background="AliceBlue" />
+                </ControlTemplate>
+            </Thumb.Template>
+        </Thumb>
+
+        <Thumb
+            Width="10"
+            HorizontalAlignment="Right"
+            Cursor="Hand"
+            DragDelta="RightDrag">
+            <Thumb.Template>
+                <ControlTemplate>
+                    <Border Background="AliceBlue" />
+                </ControlTemplate>
+            </Thumb.Template>
+        </Thumb>
+        <StackPanel
+            Margin="8,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsHitTestVisible="False"
+            Orientation="Horizontal">
+            <TextBlock Text="{ReflectionBinding Duration, StringFormat={}{0:hh}:{0:mm}:{0:ss}.{0:ff}}" />
+            <TextBlock Text="   " />
+            <TextBlock Text="{ReflectionBinding MediaContainer.FileName}" />
+        </StackPanel>
+
+    </Grid>
+</UserControl>
